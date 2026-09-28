@@ -10,6 +10,9 @@ use MRC\InventoryReservation\Infrastructure\Repository\StockRepository;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use MRC\InventoryReservation\Domain\Exception\ProductNotFound;
+use MRC\InventoryReservation\Domain\Exception\InvalidQuantity;
+use MRC\InventoryReservation\Domain\Exception\InsufficientStock;
 
 final class ReserveProductTest extends TestCase
 {
@@ -49,7 +52,7 @@ final class ReserveProductTest extends TestCase
 
         $reserves->shouldNotReceive('reserve');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(InsufficientStock::class);
         $this->expectExceptionMessage('Not enough stock available');
 
         $service = new ReserveProduct(
@@ -72,7 +75,7 @@ final class ReserveProductTest extends TestCase
 
         $reserves->shouldNotReceive('reserve');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(InsufficientStock::class);
         $this->expectExceptionMessage('Not enough stock available');
 
         $service = new ReserveProduct(
@@ -81,5 +84,48 @@ final class ReserveProductTest extends TestCase
         );
 
         $service->execute('P001', 1);
+    }
+
+    public function test_it_throws_when_product_does_not_exist(): void
+    {
+        $stock = Mockery::mock(StockRepository::class);
+        $reserves = Mockery::mock(ReservationRepository::class);
+
+        $stock
+            ->shouldReceive('getAvailableStock')
+            ->once()
+            ->with('P999')
+            ->andThrow(new ProductNotFound('Product not found'));
+
+        $reserves->shouldNotReceive('reserve');
+
+        $this->expectException(ProductNotFound::class);
+        $this->expectExceptionMessage('Product not found');
+
+        $service = new ReserveProduct(
+            $stock,
+            $reserves
+        );
+
+        $service->execute('P999', 1);
+    }
+
+    public function test_it_throws_when_product_exists_and_quantity_is_negative(): void
+    {
+        $stock = Mockery::mock(StockRepository::class);
+        $reserves = Mockery::mock(ReservationRepository::class);
+
+        $stock->shouldNotReceive('getAvailableStock');
+        $reserves->shouldNotReceive('reserve');
+
+        $this->expectException(InvalidQuantity::class);
+        $this->expectExceptionMessage('Quantity must be greater than zero');
+
+        $service = new ReserveProduct(
+            $stock,
+            $reserves
+        );
+
+        $service->execute('P001', -1);
     }
 }
