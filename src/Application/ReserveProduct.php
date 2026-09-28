@@ -19,7 +19,7 @@ final class ReserveProduct
     {
         $stockAvailable = $this->stock->getAvailableStock($productId);
 
-        if ($stockAvailable < $quantity) {
+        if (($stockAvailable < $quantity) || ($quantity <= 0)) {
             throw new \RuntimeException('Not enough stock available');
         }
 
