@@ -59,4 +59,27 @@ final class ReserveProductTest extends TestCase
 
         $service->execute('P001', 3);
     }
+
+    public function test_it_throws_exception_when_stock_is_zero(): void
+    {
+        $stock = Mockery::mock(StockRepository::class);
+        $reserves = Mockery::mock(ReservationRepository::class);
+
+        $stock
+            ->shouldReceive('getAvailableStock')
+            ->with('P001')
+            ->andReturn(0);
+
+        $reserves->shouldNotReceive('reserve');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Not enough stock available');
+
+        $service = new ReserveProduct(
+            $stock,
+            $reserves
+        );
+
+        $service->execute('P001', 1);
+    }
 }
