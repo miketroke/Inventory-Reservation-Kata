@@ -1,0 +1,1 @@
+{"version":2,"defects":{"MRC\\InventoryReservation\\Tests\\ReserveProductTest::test_it_reserves_product_when_enough_stock_is_available":8},"times":{"MRC\\InventoryReservation\\Tests\\ReserveProductTest::test_it_reserves_product_when_enough_stock_is_available":0.474}}

@@ -17,6 +17,12 @@ final class ReserveProduct
 
     public function execute(string $productId, int $quantity): void
     {
-        // TODO: Implement using TDD.
+        $stockAvailable = $this->stock->getAvailableStock($productId);
+
+        if ($stockAvailable < $quantity) {
+            throw new \RuntimeException('Not enough stock available');
+        }
+
+        $this->reservations->reserve($productId, $quantity);
     }
 }

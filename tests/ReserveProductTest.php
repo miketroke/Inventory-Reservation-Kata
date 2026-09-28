@@ -9,16 +9,11 @@ use MRC\InventoryReservation\Infrastructure\Repository\ReservationRepository;
 use MRC\InventoryReservation\Infrastructure\Repository\StockRepository;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 final class ReserveProductTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-
-        parent::tearDown();
-    }
-
+    use MockeryPHPUnitIntegration;
     public function test_it_reserves_product_when_enough_stock_is_available(): void
     {
         $stock = Mockery::mock(StockRepository::class);
@@ -31,6 +26,7 @@ final class ReserveProductTest extends TestCase
 
         $reserves
             ->shouldReceive('reserve')
+            ->once()
             ->with('P001', 3);
 
         $service = new ReserveProduct(
