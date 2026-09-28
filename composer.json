@@ -1,0 +1,19 @@
+{
+    "name": "mrc/inventory-reservation-kata",
+    "description": "Kata de TDD, Clean Code y Mockery",
+    "type": "project",
+    "require-dev": {
+        "phpunit/phpunit": "^10.5",
+        "mockery/mockery": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "MRC\\InventoryReservation\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MRC\\InventoryReservation\\Tests\\": "tests/"
+        }
+    }
+}
