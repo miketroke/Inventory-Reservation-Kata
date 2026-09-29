@@ -18,8 +18,8 @@ final class ReserveProductTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    private StockRepository $stock;
-    private ReservationRepository $reserves;
+    private $stock;
+    private $reserves;
     private ReserveProduct $service;
 
     protected function setUp(): void
