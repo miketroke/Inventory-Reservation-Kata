@@ -110,7 +110,10 @@ final class ReserveProductTest extends TestCase
         $service->execute('P999', 1);
     }
 
-    public function test_it_throws_when_product_exists_and_quantity_is_negative(): void
+    /**
+     * @dataProvider invalidQuantities
+     */
+    public function test_it_throws_when_quantity_is_invalid(int $quantity): void
     {
         $stock = Mockery::mock(StockRepository::class);
         $reserves = Mockery::mock(ReservationRepository::class);
@@ -126,6 +129,15 @@ final class ReserveProductTest extends TestCase
             $reserves
         );
 
-        $service->execute('P001', -1);
+        $service->execute('P001', $quantity);
+    }
+
+    public static function invalidQuantities(): array
+    {
+        return [
+            [0],
+            [-1],
+            [-5],
+        ];
     }
 }
